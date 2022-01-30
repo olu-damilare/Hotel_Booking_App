@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart';
 
+import 'model/hotel.dart';
+
 class Amadeus{
 
   String? token;
@@ -18,8 +20,6 @@ class Amadeus{
     Uri authorizationUri = Uri.parse("https://test.api.amadeus.com/v1/security/oauth2/token");
 
     Response response;
-    print(clientSecret);
-    print(clientId);
 
     // send authorization request
     try {
@@ -39,11 +39,10 @@ class Amadeus{
     return token;
   }
 
-  void getHotelOffers() async{
-    print("before token generation");
+  void getHotelOffers(String hotelId) async{
 
     String? accessToken = token == null ? await generateAccessToken() : token.toString();
-    Uri uri = Uri.parse("https://test.api.amadeus.com/v3/shopping/hotel-offers?hotelIds=HLLON101&adults=1");
+    Uri uri = Uri.parse("https://test.api.amadeus.com/v3/shopping/hotel-offers?hotelIds=$hotelId&adults=1");
     print("access token --> $accessToken");
     Response response;
 
@@ -64,6 +63,48 @@ class Amadeus{
     print(data);
 
 
-    // print("access token --> $accessToken");
   }
+
+  Future<List<Hotel>> fetchHotels(String name) async{
+    String? accessToken = token == null ? await generateAccessToken() : token.toString();
+    Uri uri = Uri.parse("https://test.api.amadeus.com/v1/reference-data/locations/hotel?keyword=$name&subType=HOTEL_GDS&lang=EN&max=20");
+    print("access token --> $accessToken");
+    Response response;
+    print("the hotel name is $name");
+
+
+    // send authorization request
+    print("before api call");
+    try {
+      response = await get(uri,
+          headers: {"Authorization": "Bearer $accessToken"});
+    }catch(e){
+      print("error $e occurred");
+      return [];
+    }
+    print("after api call");
+
+    List<dynamic> data = jsonDecode(response.body)['data'];
+
+    List<Hotel> fetchedHotels = [];
+
+    for(int i = 0; i < data.length; i++){
+      Hotel hotel = Hotel(
+          id: data[i]['id'],
+          name: data[i]['name'],
+        iataCode: data[i]['iataCode'],
+        subType: data[i]['subType'],
+        hotelIds: data[i]['hotelIds'][0],
+        cityName: data[i]['address']['cityName'],
+        countryCode: data[i]['address']['countryCode']
+      );
+
+    fetchedHotels.add(hotel);
+
+    }
+
+    return fetchedHotels;
+  }
+
+
 }
