@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_booking_app/amadeus.dart';
 
 import 'package:hotel_booking_app/model/hotel.dart';
+
+import 'hotel_details_screen.dart';
 
 
 class HotelOverviewScreen extends StatefulWidget {
@@ -11,19 +14,24 @@ class HotelOverviewScreen extends StatefulWidget {
 
 class _HotelOverviewScreenState extends State<HotelOverviewScreen> {
 
+  final FocusNode focusKeyword = FocusNode();
+
+  final TextEditingController keywordController = TextEditingController();
+
+  List<Hotel> searchedHotels = [];
+
+  Future<void> fetchHotels(String name) async {
+    var temp = await Amadeus().fetchHotels(name);
+    setState(() {
+      searchedHotels = temp;
+      print("searched hotels --> $searchedHotels");
+    });
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    final FocusNode focusKeyword = FocusNode();
-    final FocusNode focusLocation = FocusNode();
-
-    final TextEditingController keywordController = TextEditingController();
-    final TextEditingController locationController = TextEditingController();
-
-    List<Hotel> searchedHotels = [];
-
-    void fetchHotels(String name, String? location){
-
-    }
 
 
     return Scaffold(
@@ -32,40 +40,56 @@ class _HotelOverviewScreenState extends State<HotelOverviewScreen> {
           centerTitle: true,
           title: const Text("Hotel Booking App"),
         ),
-        body: Form(child: ListView(
+        body: Stack(
+            alignment: Alignment.bottomCenter,
             children: <Widget>[
-        TextFormField(
-        decoration: InputDecoration(
-            contentPadding: EdgeInsets.all(10),
-          icon: Icon(Icons.text_fields),
-            labelText: 'Hotel Name'
-        ),
-            textInputAction: TextInputAction.next,
-            focusNode: focusKeyword,
-            onFieldSubmitted: (_){
-              FocusScope.of(context).requestFocus(focusLocation);
-            }
-        ),
-        TextFormField(
-          decoration: InputDecoration(
+        Container(
+        decoration: const BoxDecoration(
+        image: DecorationImage(image: NetworkImage("https://images.unsplash.com/photo-1562133567-b6a0a9c7e6eb?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"), fit: BoxFit.cover,),
+    ),
+
+    ),
+        Form(child: ListView(
+            children: <Widget>[
+
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8, 20, 8, 0),
+          child: TextFormField(
+            controller: keywordController,
+            style: const TextStyle(
+              color: Colors.white
+            ),
+          decoration: const InputDecoration(
               contentPadding: EdgeInsets.all(10),
-              icon: Icon(Icons.location_on),
-              labelText: 'Location '
+            border: OutlineInputBorder(),
+              prefixIcon: Icon(
+                Icons.apartment,
+                color: Colors.white,
+              ),
+
+              labelText: 'Hotel Name',
+            labelStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 15,
+              fontWeight: FontWeight.bold
+            )
+
           ),
-          textInputAction: TextInputAction.next,
-          keyboardType: TextInputType.number,
-          focusNode: focusLocation,
+              textInputAction: TextInputAction.next,
+              focusNode: focusKeyword,
+
+          ),
         ),
-         SizedBox(
+         const SizedBox(
            height: 20,
          ),
          Center(
-           child: Container(
+           child: SizedBox(
              width: 200,
              height: 50,
              child: RaisedButton(
                 color: Colors.amber,
-               child: Text(
+               child: const Text(
                    "Search",
                  style: TextStyle(
                    fontWeight: FontWeight.bold,
@@ -73,38 +97,65 @@ class _HotelOverviewScreenState extends State<HotelOverviewScreen> {
                    color: Colors.white
                  ),
                ),
-               onPressed: (){
-
-               },
+               onPressed: () => fetchHotels(keywordController.text),
              ),
            ),
          )
         ]
     )
+        ),
+          searchedHotels.isEmpty ? Center(
+            child: Container(
+              color: Colors.black54,
+              child: Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: Text(
+                    "Input your desired hotel name in the search bar to see a list of available hotels.",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 25
+                    ),
+                ),
+              ),
+            ),
+          )
+          : Container(
+            height: 500,
+              child: ListView.builder(
+            itemCount: searchedHotels.length,
+            itemBuilder: (ctx, i) => Card(margin: EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 4,
+            ),
+              child: Padding(
+                  padding: EdgeInsets.all(8),
+                  child: ListTile(
+                    onTap: () => Navigator.of(context).pushNamed(HotelDetailsScreen.routeName, arguments: {'hotelId': searchedHotels[i].hotelIds, 'hotelName': searchedHotels[i].name}),
+                    title: Text(searchedHotels[i].name),
+                    subtitle: Row(
+                      children: <Widget>[
+                        Icon(Icons.location_on),
+                        Text("${searchedHotels[i].cityName}, ${searchedHotels[i].countryCode}")
+
+                      ],
+                    ),
+                  )
+              ),
+            ),
+          )
+          )
+
+
+    ]
         )
 
 
-        // GridView.builder(
-        //   padding: const EdgeInsets.all(10),
-        //   itemCount: selectedProducts.length,
-        //   itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
-        //
-        //     value: selectedProducts[i],
-        //     child: ProductItem(
-        //       // products[i].id,
-        //       // products[i].title,
-        //       // products[i].imageUrl
-        //     ),
-        //   ),
-        //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        //       crossAxisCount: 2,
-        //       childAspectRatio: 3 / 2,
-        //       crossAxisSpacing: 10,
-        //       mainAxisSpacing: 20
-        //   ),
-        // )
     );
   }
+
+
+
 }
 
 
