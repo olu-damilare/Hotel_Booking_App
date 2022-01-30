@@ -1,12 +1,18 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:hotel_booking_app/screens/hotel_details_screen.dart';
+import 'package:hotel_booking_app/screens/hotel_overview.dart';
 
 import 'amadeus.dart';
 
 void main() async{
   await dotenv.load();
   runApp(const MyApp());
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.purpleAccent,
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -20,6 +26,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(title: 'Hotel Booking App'),
+      routes: {
+        HotelDetailsScreen.routeName: (ctx) => HotelDetailsScreen(),
+
+      },
     );
   }
 }
@@ -41,17 +51,11 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      appBar: AppBar(
-      
-        title: Text(widget.title),
-      ),
-      body: Center(
-        
-        child: RaisedButton(
-          onPressed: amadeus.getHotelOffers,
-          child: const Text("Click"),
-        ),
-      ),
+      // appBar: AppBar(
+      //
+      //   title: Text(widget.title),
+      // ),
+      body: HotelOverviewScreen()
     );
   }
 }
