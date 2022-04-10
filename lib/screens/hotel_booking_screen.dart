@@ -1,3 +1,4 @@
+import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -30,7 +31,6 @@ class _HotelBookingScreenState extends State<HotelBookingScreen> {
     );
 
      if (value == null) return null;
-     print('value --> $value');
      return value;
 
   }
@@ -52,6 +52,38 @@ class _HotelBookingScreenState extends State<HotelBookingScreen> {
 
     return '${dateTime.year}-$month-$day';
 
+  }
+
+  void _showTopFlash({FlashBehavior style = FlashBehavior.fixed, required String message, required Color backgroundColor}) {
+    showFlash(
+      context: context,
+      duration: const Duration(seconds: 4),
+      persistent: true,
+      builder: (_, controller) {
+        return Flash(
+          controller: controller,
+          backgroundColor: backgroundColor,
+          brightness: Brightness.light,
+          barrierColor: Colors.black38,
+          barrierDismissible: true,
+          behavior: style,
+          position: FlashPosition.top,
+          child: FlashBar(
+            content: Text(
+              message,
+              style: TextStyle(
+                  color: Colors.white
+              ),
+            ),
+            primaryAction: TextButton(
+              onPressed: () {},
+              child: Text('Dismiss',
+                  style: TextStyle(color: Colors.blue)),
+            ),
+          ),
+        );
+      },
+    );
   }
 
 
@@ -186,7 +218,15 @@ class _HotelBookingScreenState extends State<HotelBookingScreen> {
                   onPressed: () async{
                     String formattedCheckInDate = formatDateForAPI(_checkInDate);
                     String formattedCheckOutDate = formatDateForAPI(_checkOutDate);
-                    print(await Amadeus().isAvailable('', formattedCheckInDate, formattedCheckOutDate));
+
+                    bool isAvailable = await Amadeus().isAvailable('', _numberOfAdultsController.text, formattedCheckInDate, formattedCheckOutDate);
+
+                    if(!isAvailable){
+                      _showTopFlash(message: 'Room is currently unavailable for the selected dates.', backgroundColor: Colors.red);
+                    }else{
+                      Navigator.of(context).pushReplacementNamed('hotels-overview');
+                      _showTopFlash(message: 'Successfully booked room.', backgroundColor: Colors.green);
+                    }
                   },
                   color: Colors.amber,
                 ),

@@ -7,6 +7,7 @@ import 'hotel_details_screen.dart';
 
 
 class HotelOverviewScreen extends StatefulWidget {
+  static const routeName = "/hotels-overview";
 
   @override
   _HotelOverviewScreenState createState() => _HotelOverviewScreenState();

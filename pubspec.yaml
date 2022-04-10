@@ -38,6 +38,7 @@ dependencies:
   intl: ^0.17.0
   http: ^0.13.4
   flutter_dotenv: ^5.0.2
+  flash: ^2.0.3+2
 
 dev_dependencies:
   flutter_test:

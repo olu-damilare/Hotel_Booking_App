@@ -77,9 +77,9 @@ class Amadeus{
 
   }
 
-  Future<bool> isAvailable(String hotelId, String checkInDate, String checkOutDate) async{
+  Future<bool> isAvailable(String hotelId, String adults, String checkInDate, String checkOutDate) async{
     String? accessToken = token == null ? await generateAccessToken() : token.toString();
-    Uri uri = Uri.parse("https://test.api.amadeus.com/v3/shopping/hotel-offers?hotelIds=MCLONGHM&adults=1&checkInDate=$checkInDate&checkOutDate=$checkOutDate");
+    Uri uri = Uri.parse("https://test.api.amadeus.com/v3/shopping/hotel-offers?hotelIds=MCLONGHM&adults=$adults&checkInDate=$checkInDate&checkOutDate=$checkOutDate");
     print("access token --> $accessToken");
     Response response;
 

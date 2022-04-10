@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
       home: const MyHomePage(title: 'Hotel Booking App'),
       routes: {
         HotelDetailsScreen.routeName: (ctx) => HotelDetailsScreen(),
+        HotelOverviewScreen.routeName: (ctx) => HotelOverviewScreen(),
 
       },
     );
