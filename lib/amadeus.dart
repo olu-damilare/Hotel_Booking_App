@@ -39,10 +39,10 @@ class Amadeus{
     return token;
   }
 
-  void getHotelOffers(String hotelId) async{
+  Future<Hotel?> getHotelOffers(String hotelId) async{
 
     String? accessToken = token == null ? await generateAccessToken() : token.toString();
-    Uri uri = Uri.parse("https://test.api.amadeus.com/v3/shopping/hotel-offers?hotelIds=$hotelId&adults=1");
+    Uri uri = Uri.parse("https://test.api.amadeus.com/v3/shopping/hotel-offers?hotelIds=$hotelId");
     print("access token --> $accessToken");
     Response response;
 
@@ -54,14 +54,49 @@ class Amadeus{
     }catch(e){
       print("error $e occurred");
       // return "Unable to generate access token due to error $e";
-      return;
+      return null;
     }
     print("after api call");
 
-
     Map data = jsonDecode(response.body);
+    Hotel hotel = Hotel(
+      id: data['data'][0]['hotel']['hotelId'],
+      name: data['data'][0]['hotel']['name'],
+      hotelIds: data['data'][0]['hotel']['hotelId'],
+      location: data['data'][0]['hotel']['cityCode'],
+      roomCategory: data['data'][0]['offers'][0]['room']['typeEstimated']['category'],
+      beds: data['data'][0]['offers'][0]['room']['typeEstimated']['beds'],
+      bedType: data['data'][0]['offers'][0]['room']['typeEstimated']['bedType'],
+      description: data['data'][0]['offers'][0]['room']['description']['text'],
+      currency: data['data'][0]['offers'][0]['price']['currency'],
+      price: data['data'][0]['offers'][0]['price']['total'],
+    );
     print(data);
 
+    return hotel;
+
+  }
+
+  Future<bool> isAvailable(String hotelId, String checkInDate, String checkOutDate) async{
+    String? accessToken = token == null ? await generateAccessToken() : token.toString();
+    Uri uri = Uri.parse("https://test.api.amadeus.com/v3/shopping/hotel-offers?hotelIds=MCLONGHM&adults=1&checkInDate=$checkInDate&checkOutDate=$checkOutDate");
+    print("access token --> $accessToken");
+    Response response;
+
+    // send authorization request
+    try {
+      response = await get(uri,
+          headers: {"Authorization": "Bearer $accessToken"});
+    }catch(e){
+      print("error $e occurred");
+      // return "Unable to generate access token due to error $e";
+      return false;
+    }
+
+    Map data = jsonDecode(response.body);
+    print('data --> $data');
+
+    return data['data'][0]['available'];
 
   }
 
@@ -88,6 +123,7 @@ class Amadeus{
 
     List<Hotel> fetchedHotels = [];
 
+    // create new Hotel instances using the data returned from the API call.
     for(int i = 0; i < data.length; i++){
       Hotel hotel = Hotel(
           id: data[i]['id'],

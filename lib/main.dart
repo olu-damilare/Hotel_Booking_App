@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:hotel_booking_app/screens/hotel_booking_screen.dart';
 import 'package:hotel_booking_app/screens/hotel_details_screen.dart';
 import 'package:hotel_booking_app/screens/hotel_overview.dart';
 
@@ -55,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
       //
       //   title: Text(widget.title),
       // ),
-      body: HotelOverviewScreen()
+      body: HotelBookingScreen()
     );
   }
 }

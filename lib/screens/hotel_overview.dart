@@ -20,10 +20,17 @@ class _HotelOverviewScreenState extends State<HotelOverviewScreen> {
 
   List<Hotel> searchedHotels = [];
 
+  bool isLoading = false;
+
   Future<void> fetchHotels(String name) async {
+    isLoading = true;
+    setState(() {
+
+    });
     var temp = await Amadeus().fetchHotels(name);
     setState(() {
       searchedHotels = temp;
+      isLoading = false;
       print("searched hotels --> $searchedHotels");
     });
 
@@ -104,7 +111,10 @@ class _HotelOverviewScreenState extends State<HotelOverviewScreen> {
         ]
     )
         ),
-          searchedHotels.isEmpty ? Center(
+         isLoading ? Center(child: CircularProgressIndicator(
+           color: Colors.white,
+         ))
+          : searchedHotels.isEmpty ? Center(
             child: Container(
               color: Colors.black54,
               child: Padding(
@@ -132,7 +142,7 @@ class _HotelOverviewScreenState extends State<HotelOverviewScreen> {
                   padding: EdgeInsets.all(8),
                   child: ListTile(
                     onTap: () => Navigator.of(context).pushNamed(HotelDetailsScreen.routeName, arguments: {'hotelId': searchedHotels[i].hotelIds, 'hotelName': searchedHotels[i].name}),
-                    title: Text(searchedHotels[i].name),
+                    title: Text(searchedHotels[i].name as String),
                     subtitle: Row(
                       children: <Widget>[
                         Icon(Icons.location_on),
