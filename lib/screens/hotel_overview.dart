@@ -32,7 +32,6 @@ class _HotelOverviewScreenState extends State<HotelOverviewScreen> {
     setState(() {
       searchedHotels = temp;
       isLoading = false;
-      print("searched hotels --> $searchedHotels");
     });
 
   }
@@ -142,7 +141,7 @@ class _HotelOverviewScreenState extends State<HotelOverviewScreen> {
               child: Padding(
                   padding: EdgeInsets.all(8),
                   child: ListTile(
-                    onTap: () => Navigator.of(context).pushNamed(HotelDetailsScreen.routeName, arguments: {'hotelId': searchedHotels[i].hotelIds, 'hotelName': searchedHotels[i].name}),
+                    onTap: () => Navigator.of(context).pushNamed(HotelDetailsScreen.routeName, arguments: {'hotelId': searchedHotels[i].hotelId, 'hotelName': searchedHotels[i].name}),
                     title: Text(searchedHotels[i].name as String),
                     subtitle: Row(
                       children: <Widget>[
