@@ -3,11 +3,11 @@ import 'package:flutter/cupertino.dart';
 
 class Hotel {
 
-    String? id;
+    int? id;
     String? name;
     String? iataCode;
     String? subType;
-    String? hotelIds;
+    String? hotelId;
     String? cityName;
     String? countryCode;
     String? location;
@@ -17,13 +17,14 @@ class Hotel {
     String? description;
     String? currency;
     String? price;
+    String? offerId;
 
     Hotel({
         this.id,
         this.name,
         this.iataCode,
         this.subType,
-        this.hotelIds,
+        this.hotelId,
         this.cityName,
         this.countryCode,
         this.location,
@@ -33,7 +34,7 @@ class Hotel {
         this.description,
         this.currency,
         this.price,
-
+        this.offerId
     });
 
 
