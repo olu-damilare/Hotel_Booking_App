@@ -32,7 +32,6 @@ class Amadeus{
     }
 
     Map data = jsonDecode(response.body);
-    print(data);
 
     // get token from response
     token = data['access_token'];
@@ -62,7 +61,7 @@ class Amadeus{
     Hotel hotel = Hotel(
       id: data['data'][0]['hotel']['hotelId'],
       name: data['data'][0]['hotel']['name'],
-      hotelIds: data['data'][0]['hotel']['hotelId'],
+      hotelId: data['data'][0]['hotel']['hotelId'],
       location: data['data'][0]['hotel']['cityCode'],
       roomCategory: data['data'][0]['offers'][0]['room']['typeEstimated']['category'],
       beds: data['data'][0]['offers'][0]['room']['typeEstimated']['beds'],
@@ -70,6 +69,7 @@ class Amadeus{
       description: data['data'][0]['offers'][0]['room']['description']['text'],
       currency: data['data'][0]['offers'][0]['price']['currency'],
       price: data['data'][0]['offers'][0]['price']['total'],
+      offerId: data['data'][0]['offers'][0]['id']
     );
     print(data);
 
@@ -80,8 +80,9 @@ class Amadeus{
   Future<bool> isAvailable(String hotelId, String adults, String checkInDate, String checkOutDate) async{
     String? accessToken = token == null ? await generateAccessToken() : token.toString();
     Uri uri = Uri.parse("https://test.api.amadeus.com/v3/shopping/hotel-offers?hotelIds=MCLONGHM&adults=$adults&checkInDate=$checkInDate&checkOutDate=$checkOutDate");
-    print("access token --> $accessToken");
     Response response;
+    print("check in date --> $checkInDate");
+    print("check out date --> $checkOutDate");
 
     // send authorization request
     try {
@@ -130,7 +131,7 @@ class Amadeus{
           name: data[i]['name'],
         iataCode: data[i]['iataCode'],
         subType: data[i]['subType'],
-        hotelIds: data[i]['hotelIds'][0],
+        hotelId: data[i]['hotelIds'][0],
         cityName: data[i]['address']['cityName'],
         countryCode: data[i]['address']['countryCode']
       );
@@ -140,6 +141,66 @@ class Amadeus{
     }
 
     return fetchedHotels;
+  }
+
+
+  Future<void> bookRoom({
+    required String offerId,
+    required String title,
+    required String firstName,
+    required String lastName,
+    required String phoneNumber,
+    required String email
+  }
+      ) async{
+    String? accessToken = token == null ? await generateAccessToken() : token.toString();
+    Uri bookingUri = Uri.parse("https://test.api.amadeus.com/v1/booking/hotel-bookings");
+
+    Response response;
+
+    Map requestBody = {
+      "data": {
+        "offerId": offerId,
+        "guests": [
+          {
+            "name": {
+              "title": title,
+              "firstName": firstName,
+              "lastName": lastName
+            },
+            "contact": {
+              "phone": phoneNumber,
+              "email": email
+            }
+          }
+        ],
+        "payments": [
+          {
+            "method": "creditCard",
+            "card": {
+              "vendorCode": "VI",
+              "cardNumber": "4111111111111111",
+              "expiryDate": "2023-01"
+            }
+          }
+        ]
+      }
+    };
+
+    var body = json.encode(requestBody);
+
+    // send authorization request
+    try {
+      response = await post(bookingUri,
+          headers: {"Content-Type": "application/json",
+            "Authorization": "Bearer $accessToken"},
+          body: body);
+    }catch(e){
+      print("error generating token --> $e");
+      return;
+    }
+
+    Map data = jsonDecode(response.body);
   }
 
 
