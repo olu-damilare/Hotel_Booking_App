@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 
 class Hotel {
 
-    int? id;
+    String? id;
     String? name;
     String? iataCode;
     String? subType;
