@@ -40,7 +40,6 @@ class _HotelOverviewScreenState extends State<HotelOverviewScreen> {
   @override
   Widget build(BuildContext context) {
 
-
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.purpleAccent,
@@ -141,7 +140,12 @@ class _HotelOverviewScreenState extends State<HotelOverviewScreen> {
               child: Padding(
                   padding: EdgeInsets.all(8),
                   child: ListTile(
-                    onTap: () => Navigator.of(context).pushNamed(HotelDetailsScreen.routeName, arguments: {'hotelId': searchedHotels[i].hotelId, 'hotelName': searchedHotels[i].name}),
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) =>
+                               HotelDetailsScreen(searchedHotels[i].hotelId as String))
+                      );
+                  },
                     title: Text(searchedHotels[i].name as String),
                     subtitle: Row(
                       children: <Widget>[
@@ -149,17 +153,9 @@ class _HotelOverviewScreenState extends State<HotelOverviewScreen> {
                         Text("${searchedHotels[i].cityName}, ${searchedHotels[i].countryCode}")
 
                       ],
-                    ),
-                  )
-              ),
-            ),
-          )
-          )
-
-
+                    ),)),),))
     ]
         )
-
 
     );
   }
