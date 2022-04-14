@@ -7,7 +7,9 @@ import 'hotel_booking_screen.dart';
 
 class HotelDetailsScreen extends StatefulWidget {
 
-  const HotelDetailsScreen({Key? key}) : super(key: key);
+   HotelDetailsScreen(this.hotelId);
+
+  String hotelId;
 
   static const routeName = "/hotel-details";
 
@@ -18,14 +20,11 @@ class HotelDetailsScreen extends StatefulWidget {
 class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
 
   Hotel? hotel;
-  bool isLoading = false;
+  bool isLoading = true;
 
   Future<void> fetchHotelDetails(String hotelId) async {
-    setState(() {
-      isLoading = true;
-    });
+
     hotel = await Amadeus().getHotelOffers(hotelId);
-    // hotel = await Amadeus().getHotelOffers('MCLONGHM');
     if(hotel == null){
       SnackBar(
         backgroundColor: Colors.red,
@@ -39,10 +38,9 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
     });
   }
 
-
   @override
   void initState() {
-    fetchHotelDetails('MCLONGHM');
+    fetchHotelDetails(widget.hotelId);
   }
 
   TextStyle keyStyle(){
@@ -64,18 +62,13 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final routeArgs = ModalRoute.of(context)?.settings.arguments as Map<String, String>;
-    String hotelId = routeArgs['hotelId'] as String;
-    // print("hotel name ${routeArgs['hotelName']}");
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.purpleAccent,
         centerTitle: true,
-        title: Text(
-          "Hotel"
-          // hotel!.name as String
-          // "${routeArgs['hotelName']}",
+        title: isLoading ? Text("") : Text(
+          hotel?.name as String
         ),
       ),
         body: hotel == null ? Center(
@@ -157,10 +150,9 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
                         ),
                       ),
                       onPressed: (){
-                        Navigator.pushNamed(
-                            context,
-                            HotelBookingScreen.routeName,
-                          arguments: {'offerId': hotel!.offerId}
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) =>
+                                HotelBookingScreen(hotel!.offerId as String))
                         );
                       },
                       color: Colors.amber,
