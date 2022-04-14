@@ -41,12 +41,11 @@ class Amadeus{
   Future<Hotel?> getHotelOffers(String hotelId) async{
 
     String? accessToken = token == null ? await generateAccessToken() : token.toString();
-    Uri uri = Uri.parse("https://test.api.amadeus.com/v3/shopping/hotel-offers?hotelIds=$hotelId");
+    Uri uri = Uri.parse("https://test.api.amadeus.com/v3/shopping/hotel-offers?hotelIds=MCLONGHM");
     print("access token --> $accessToken");
     Response response;
 
     // send authorization request
-    print("before api call");
     try {
       response = await get(uri,
           headers: {"Authorization": "Bearer $accessToken"});
@@ -55,9 +54,10 @@ class Amadeus{
       // return "Unable to generate access token due to error $e";
       return null;
     }
-    print("after api call");
 
     Map data = jsonDecode(response.body);
+
+    print("data --> $data");
     Hotel hotel = Hotel(
       id: data['data'][0]['hotel']['hotelId'],
       name: data['data'][0]['hotel']['name'],
@@ -71,7 +71,6 @@ class Amadeus{
       price: data['data'][0]['offers'][0]['price']['total'],
       offerId: data['data'][0]['offers'][0]['id']
     );
-    print(data);
 
     return hotel;
 
@@ -104,13 +103,9 @@ class Amadeus{
   Future<List<Hotel>> fetchHotels(String name) async{
     String? accessToken = token == null ? await generateAccessToken() : token.toString();
     Uri uri = Uri.parse("https://test.api.amadeus.com/v1/reference-data/locations/hotel?keyword=$name&subType=HOTEL_GDS&lang=EN&max=20");
-    print("access token --> $accessToken");
     Response response;
-    print("the hotel name is $name");
-
 
     // send authorization request
-    print("before api call");
     try {
       response = await get(uri,
           headers: {"Authorization": "Bearer $accessToken"});
@@ -118,7 +113,6 @@ class Amadeus{
       print("error $e occurred");
       return [];
     }
-    print("after api call");
 
     List<dynamic> data = jsonDecode(response.body)['data'];
 
@@ -127,7 +121,6 @@ class Amadeus{
     // create new Hotel instances using the data returned from the API call.
     for(int i = 0; i < data.length; i++){
       Hotel hotel = Hotel(
-          id: data[i]['id'],
           name: data[i]['name'],
         iataCode: data[i]['iataCode'],
         subType: data[i]['subType'],
