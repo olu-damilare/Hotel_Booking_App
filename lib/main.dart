@@ -24,13 +24,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Hotel Booking App',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.purple,
       ),
       home: const MyHomePage(title: 'Hotel Booking App'),
       routes: {
-        HotelDetailsScreen.routeName: (ctx) => HotelDetailsScreen(),
         HotelOverviewScreen.routeName: (ctx) => HotelOverviewScreen(),
-        HotelBookingScreen.routeName: (ctx) => HotelBookingScreen(),
 
       },
     );
