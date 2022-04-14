@@ -76,12 +76,10 @@ class Amadeus{
 
   }
 
-  Future<bool> isAvailable(String hotelId, String adults, String checkInDate, String checkOutDate) async{
+  Future<bool> isAvailable(String hotelId, String adults, String checkInDate, String checkOutDate, String roomQuantity) async{
     String? accessToken = token == null ? await generateAccessToken() : token.toString();
-    Uri uri = Uri.parse("https://test.api.amadeus.com/v3/shopping/hotel-offers?hotelIds=MCLONGHM&adults=$adults&checkInDate=$checkInDate&checkOutDate=$checkOutDate");
+    Uri uri = Uri.parse("https://test.api.amadeus.com/v3/shopping/hotel-offers?hotelIds=$hotelId&adults=$adults&roomQuantity=$roomQuantity&checkInDate=$checkInDate&checkOutDate=$checkOutDate");
     Response response;
-    print("check in date --> $checkInDate");
-    print("check out date --> $checkOutDate");
 
     // send authorization request
     try {
@@ -143,14 +141,14 @@ class Amadeus{
     required String firstName,
     required String lastName,
     required String phoneNumber,
-    required String email
-  }
-      ) async{
+    required String email,
+  }) async{
     String? accessToken = token == null ? await generateAccessToken() : token.toString();
     Uri bookingUri = Uri.parse("https://test.api.amadeus.com/v1/booking/hotel-bookings");
 
     Response response;
 
+    // request body sent to the hotel booking API
     Map requestBody = {
       "data": {
         "offerId": offerId,
@@ -194,6 +192,7 @@ class Amadeus{
     }
 
     Map data = jsonDecode(response.body);
+    print("response data --> $data");
   }
 
 

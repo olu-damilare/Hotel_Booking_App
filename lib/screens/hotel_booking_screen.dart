@@ -8,9 +8,8 @@ import '../amadeus.dart';
 class HotelBookingScreen extends StatefulWidget {
 
   String offerId;
-
-  HotelBookingScreen(this.offerId);
-
+  String hotelId;
+  HotelBookingScreen(this.offerId, this.hotelId);
 
   @override
   _HotelBookingScreenState createState() => _HotelBookingScreenState();
@@ -25,10 +24,12 @@ class _HotelBookingScreenState extends State<HotelBookingScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _countryCodeController = TextEditingController();
+  final TextEditingController _roomQuantityController = TextEditingController();
   final FocusNode _firstNameNode = FocusNode();
   final FocusNode _lastNameNode = FocusNode();
   final FocusNode _emailNode = FocusNode();
   final FocusNode _numberOfAdultsNode = FocusNode();
+  final FocusNode _roomQuantityNode = FocusNode();
   final FocusNode _titleNode = FocusNode();
   final FocusNode _phoneNumberNode = FocusNode();
   final FocusNode _countryCodeNode = FocusNode();
@@ -216,6 +217,26 @@ class _HotelBookingScreenState extends State<HotelBookingScreen> {
                 ),
                 TextFormField(
                   decoration: InputDecoration(
+                      labelText: 'Room quantiy'
+                  ),
+                  keyboardType: TextInputType.number,
+                  controller: _roomQuantityController,
+                  focusNode: _roomQuantityNode,
+                  validator: (value){
+                    if((value as String).isEmpty){
+                      return 'Please provide the quantity of rooms to book.';
+                    }
+                    if(double.tryParse(value) == null){
+                      return 'Please provide a valid number';
+                    }
+                    if(double.parse(value) <= 0){
+                      return 'Please provide a number greater than zero';
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  decoration: InputDecoration(
                       labelText: 'Country code'
                   ),
                   keyboardType: TextInputType.number,
@@ -279,7 +300,7 @@ class _HotelBookingScreenState extends State<HotelBookingScreen> {
                             });
                           },
                           textColor: Theme.of(context).primaryColor,
-                          child: const Text('Select check in date', style: TextStyle(fontWeight: FontWeight.bold),)),
+                          child: const Text('Select check-in date', style: TextStyle(fontWeight: FontWeight.bold),)),
                     ],
                   ),
                 ),
@@ -306,7 +327,7 @@ class _HotelBookingScreenState extends State<HotelBookingScreen> {
                             });
                           },
                           textColor: Theme.of(context).primaryColor,
-                          child: const Text('Select check out date', style: TextStyle(fontWeight: FontWeight.bold),)),
+                          child: const Text('Select check-out date', style: TextStyle(fontWeight: FontWeight.bold),)),
                     ],
                   ),
                 ),
@@ -328,7 +349,7 @@ class _HotelBookingScreenState extends State<HotelBookingScreen> {
                       String formattedCheckInDate = formatDateForAPI(_checkInDate);
                       String formattedCheckOutDate = formatDateForAPI(_checkOutDate);
 
-                      bool isAvailable = await amadeus.isAvailable('', _numberOfAdultsController.text, formattedCheckInDate, formattedCheckOutDate);
+                      bool isAvailable = await amadeus.isAvailable(widget.hotelId, _numberOfAdultsController.text, formattedCheckInDate, formattedCheckOutDate, _roomQuantityController.text);
 
                       if(!isAvailable){
                         _showTopFlash(message: 'Room is currently unavailable for the selected dates.', backgroundColor: Colors.red);
@@ -338,16 +359,11 @@ class _HotelBookingScreenState extends State<HotelBookingScreen> {
                         Navigator.of(context).pushReplacementNamed(HotelOverviewScreen.routeName);
                         _showTopFlash(message: 'Successfully booked room.', backgroundColor: Colors.green);
                       }
-
-
                     },
                     color: Colors.amber,
                   ),
                 )
-
               ],
-
-
             ),),
         ),
       ),

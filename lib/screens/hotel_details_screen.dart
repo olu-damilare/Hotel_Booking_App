@@ -152,7 +152,7 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
                       onPressed: (){
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (_) =>
-                                HotelBookingScreen(hotel!.offerId as String))
+                                HotelBookingScreen(hotel!.offerId as String, hotel!.hotelId as String))
                         );
                       },
                       color: Colors.amber,
