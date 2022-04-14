@@ -74,7 +74,7 @@ class _HotelBookingScreenState extends State<HotelBookingScreen> {
   void _showTopFlash({FlashBehavior style = FlashBehavior.fixed, required String message, required Color backgroundColor}) {
     showFlash(
       context: context,
-      duration: const Duration(seconds: 14),
+      duration: const Duration(seconds: 2),
       persistent: true,
       builder: (_, controller) {
         return Flash(
