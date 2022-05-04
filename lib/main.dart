@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hotel_booking_app/screens/hotel_booking_screen.dart';
 import 'package:hotel_booking_app/screens/hotel_details_screen.dart';
-import 'package:hotel_booking_app/screens/hotel_overview.dart';
+import 'package:hotel_booking_app/screens/hotel_overview_screen.dart';
 
 import 'amadeus.dart';
 
