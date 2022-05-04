@@ -1,6 +1,6 @@
 import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
-import 'package:hotel_booking_app/screens/hotel_overview.dart';
+import 'package:hotel_booking_app/screens/hotel_overview_screen.dart';
 import 'package:intl/intl.dart';
 
 import '../amadeus.dart';
@@ -75,7 +75,7 @@ class _HotelBookingScreenState extends State<HotelBookingScreen> {
   void _showTopFlash({FlashBehavior style = FlashBehavior.fixed, required String message, required Color backgroundColor}) {
     showFlash(
       context: context,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 4),
       persistent: true,
       builder: (_, controller) {
         return Flash(
@@ -102,14 +102,12 @@ class _HotelBookingScreenState extends State<HotelBookingScreen> {
         );
       },
     );
-    setState(() {
-      isLoading = false;
-    });
   }
 
 
 
-  @override
+
+@override
   Widget build(BuildContext context) {
 
     return Scaffold(
@@ -217,7 +215,7 @@ class _HotelBookingScreenState extends State<HotelBookingScreen> {
                 ),
                 TextFormField(
                   decoration: InputDecoration(
-                      labelText: 'Room quantiy'
+                      labelText: 'Room quantity'
                   ),
                   keyboardType: TextInputType.number,
                   controller: _roomQuantityController,
