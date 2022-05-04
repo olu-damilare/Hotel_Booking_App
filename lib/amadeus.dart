@@ -59,7 +59,6 @@ class Amadeus{
 
     print("data --> $data");
     Hotel hotel = Hotel(
-      id: data['data'][0]['hotel']['hotelId'],
       name: data['data'][0]['hotel']['name'],
       hotelId: data['data'][0]['hotel']['hotelId'],
       location: data['data'][0]['hotel']['cityCode'],
